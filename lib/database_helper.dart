@@ -80,11 +80,11 @@ class DatabaseHelper {
       'King'
     ];
 
-    for (int folderId = 0; folderId < suits.length; folderId++) {
+    for (int folderId = 1; folderId <= suits.length; folderId++) {
       for (final cardName in cardNames) {
         await db.insert('cards', {
           'card_name': cardName,
-          'suit': suits[folderId],
+          'suit': suits[folderId - 1],
           'image_url': _buildCardImageUrl(cardName, suits[folderId]),
           'folder_id': folderId,
         });
