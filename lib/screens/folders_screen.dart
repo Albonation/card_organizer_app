@@ -12,8 +12,8 @@ class FoldersScreen extends StatefulWidget {
 class _FoldersScreenState extends State {
   final FolderRepository _folderRepository = FolderRepository();
   final CardRepository _cardRepository = CardRepository();
-  List _folders = [];
-  Map _cardCounts = {};
+  List<Folder> _folders = [];
+  Map<int, int> _cardCounts = {};
 
   @override
   void initState() {
