@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 
 class CardsScreen extends State {
   late PlayingCard playingCard;
-  CardsScreen({super.key, required this.playingCard});
+  CardsScreen({required this.playingCard});
 
   @override
   Widget build(BuildContext context) {
@@ -25,8 +25,17 @@ class CardsScreen extends State {
             Text(
               playingCard.cardName,
               style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-              )
-          ],)
-      ))
+            ),
+
+            const SizedBox(height: 16),
+
+            Text(
+              playingCard.suit,
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            )
+          ],
+        ),
+      ),
+    );
   }
 }
