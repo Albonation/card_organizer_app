@@ -1,7 +1,17 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:card_organizer_app/screens/folders_screen.dart';
+import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
-void main() {
+import 'screens/folders_screen.dart';
+
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
+    sqfliteFfiInit();
+    databaseFactory = databaseFactoryFfi;
+  }
+
   runApp(const MyApp());
 }
 
