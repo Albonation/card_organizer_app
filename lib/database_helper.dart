@@ -7,77 +7,94 @@ class DatabaseHelper {
 
   DatabaseHelper._init();
 
-  Future get database async {
+  Future<Database> get database async {
     if (_database != null) return _database!;
-    _database = await _initDB('card_organizer.db');
+    _database = await _initDatabase('card_organizer.db');
     return _database!;
   }
 
-  Future _initDB(String filePath) async {
+  Future<Database> _initDatabase(String filePath) async {
     final dbPath = await getDatabasesPath();
     final path = join(dbPath, filePath);
-    
+
     return await openDatabase(
       path,
       version: 1,
+      onConfigure: _onConfigure,
       onCreate: _createDB,
     );
   }
 
-  Future _createDB(Database db, int version) async {
-    // Create Folders table
+  Future<void> _onConfigure(Database db) async {
+    await db.execute('PRAGMA foreign_keys = ON');
+  }
+
+  Future<void> _createDB(Database db, int version) async {
     await db.execute('''
-      CREATE TABLE folders(
+      CREATE TABLE folders (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         folder_name TEXT NOT NULL,
         timestamp TEXT NOT NULL
       )
     ''');
 
-    // Create Cards table with foreign key
     await db.execute('''
-      CREATE TABLE cards(
+      CREATE TABLE cards (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         card_name TEXT NOT NULL,
         suit TEXT NOT NULL,
         image_url TEXT,
-        folder_id INTEGER,
-        FOREIGN KEY (folder_id) REFERENCES folders (id)
-          ON DELETE CASCADE
+        folder_id INTEGER NOT NULL,
+        FOREIGN KEY (folder_id) REFERENCES folders (id) ON DELETE CASCADE
       )
     ''');
-
-    // Prepopulate folders
     await _prepopulateFolders(db);
-    
-    // Prepopulate cards
     await _prepopulateCards(db);
   }
 
-  Future _prepopulateFolders(Database db) async {
+  Future<void> _prepopulateFolders(Database db) async {
     final folders = ['Hearts', 'Diamonds', 'Clubs', 'Spades'];
-    for (int i = 0; i < folders.length; i++) {
+    for (final folder in folders) {
       await db.insert('folders', {
-        'folder_name': folders[i],
+        'folder_name': folder,
         'timestamp': DateTime.now().toIso8601String(),
       });
     }
   }
 
-  Future _prepopulateCards(Database db) async {
-    final suits = ['Hearts', 'Diamonds', 'Clubs', 'Spades'];
-    final cards = ['Ace', '2', '3', '4', '5', '6', '7', 
-                   '8', '9', '10', 'Jack', 'Queen', 'King'];
-    
-    for (int folderId = 1; folderId <= suits.length; folderId++) {
-      for (var card in cards) {
+  Future<void> _prepopulateCards(Database db) async {
+    const suits = ['Hearts', 'Diamonds', 'Clubs', 'Spades'];
+    const cardNames = [
+      'Ace',
+      '2',
+      '3',
+      '4',
+      '5',
+      '6',
+      '7',
+      '8',
+      '9',
+      '10',
+      'Jack',
+      'Queen',
+      'King'
+    ];
+
+    for (int folderId = 0; folderId < suits.length; folderId++) {
+      for (final cardName in cardNames) {
         await db.insert('cards', {
-          'card_name': card,
-          'suit': suits[folderId - 1],
-          'image_url': 'assets/cards/${suits[folderId - 1].toLowerCase()}_$card.png',
+          'card_name': cardName,
+          'suit': suits[folderId],
+          'image_url': _buildCardImageUrl(cardName, suits[folderId]),
           'folder_id': folderId,
         });
       }
     }
+  }
+
+  String _buildCardImageUrl(String cardName, String suit) {
+    final cardInitial = cardName == '10' ? '0' : cardName[0];
+    final suitInitial = suit[0];
+    return 'assets/card_images/${cardInitial}${suitInitial}.png';
   }
 }
