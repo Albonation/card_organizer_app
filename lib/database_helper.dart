@@ -19,7 +19,7 @@ class DatabaseHelper {
 
     return await openDatabase(
       path,
-      version: 2, //increment this version if you make changes to the database schema
+      version: 3, //increment this version if you make changes to the database schema
       onConfigure: _onConfigure,
       onCreate: _createDB,
     );
@@ -85,7 +85,7 @@ class DatabaseHelper {
         await db.insert('cards', {
           'card_name': cardName,
           'suit': suits[folderId - 1],
-          'image_url': _buildCardImageUrl(cardName, suits[folderId]),
+          'image_url': _buildCardImageUrl(cardName, suits[folderId - 1]),
           'folder_id': folderId,
         });
       }
@@ -97,4 +97,32 @@ class DatabaseHelper {
     final suitInitial = suit[0];
     return 'assets/card_images/${cardInitial}${suitInitial}.png';
   }
-}
+
+//testing method below here
+  Future<void> printDatabaseContents() async {
+    final db = await database;
+
+    print('=== FOLDERS ===');
+    final folders = await db.query('folders');
+    for (final folder in folders) {
+      print(folder);
+    }
+
+    print('\n=== CARDS (first 20) ===');
+    final cards = await db.query('cards', limit: 20, orderBy: 'folder_id ASC');
+    for (final card in cards) {
+      print(card);
+    }
+
+    print('\n=== CARD COUNT BY FOLDER ===');
+    final counts = await db.rawQuery('''
+    SELECT f.folder_name, COUNT(c.id) as card_count
+    FROM folders f LEFT JOIN cards c ON f.id = c.folder_id
+    GROUP BY f.id
+    ORDER BY f.id
+  ''');
+    for (final row in counts) {
+      print(row);
+    }
+  }//end of testing method
+}//end of database helper

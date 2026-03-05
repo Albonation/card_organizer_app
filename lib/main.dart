@@ -1,7 +1,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
-
+import 'database_helper.dart';
 import 'screens/folders_screen.dart';
 
 Future<void> main() async {
@@ -11,6 +11,9 @@ Future<void> main() async {
     sqfliteFfiInit();
     databaseFactory = databaseFactoryFfi;
   }
+
+  //database helper test
+  await DatabaseHelper.instance.printDatabaseContents();
 
   runApp(const MyApp());
 }
