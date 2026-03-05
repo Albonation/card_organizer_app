@@ -1,7 +1,7 @@
 import 'package:sqflite/sqflite.dart';
 
 import '../database_helper.dart';
-import '../models/card.dart';
+import '../models/card_item.dart';
 class CardRepository {
   final DatabaseHelper _dbHelper = DatabaseHelper.instance;
 
