@@ -1,3 +1,5 @@
+import 'package:sqflite/sqflite.dart';
+
 import '../database_helper.dart';
 import '../models/card.dart';
 class CardRepository {
@@ -12,7 +14,7 @@ class CardRepository {
   // READ - Get all cards
   Future> Future<dynamic> getAllCards() async {
     final db = await _dbHelper.database;
-    final List> maps = await db.query('cards');
+    final List<dynamic> maps = await db.query('cards');
     
     return List.generate(maps.length, (i) {
       return PlayingCard.fromMap(maps[i]);
@@ -22,7 +24,7 @@ class CardRepository {
   // READ - Get cards by folder ID
   Future> Future<dynamic> getCardsByFolderId(int folderId) async {
     final db = await _dbHelper.database;
-    final List> maps = await db.query(
+    final List<dynamic> maps = await db.query(
       'cards',
       where: 'folder_id = ?',
       whereArgs: [folderId],
@@ -37,7 +39,7 @@ class CardRepository {
   // READ - Get a single card by ID
   Future getCardById(int id) async {
     final db = await _dbHelper.database;
-    final List> maps = await db.query(
+    final List<dynamic> maps = await db.query(
       'cards',
       where: 'id = ?',
       whereArgs: [id],
@@ -48,7 +50,7 @@ class CardRepository {
   }
 
   // UPDATE - Update an existing card
-  Future updateCard(PlayingCard card) async {
+  Future<dynamic> updateCard(PlayingCard card) async {
     final db = await _dbHelper.database;
     return await db.update(
       'cards',
