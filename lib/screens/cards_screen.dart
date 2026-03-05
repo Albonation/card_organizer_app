@@ -15,7 +15,6 @@ class CardsScreen extends StatefulWidget {
 class _CardsScreenState extends State<CardsScreen> {
   final CardRepository _cardRepo = CardRepository();
   List<PlayingCard> _cards = [];
-
   @override
   void initState() {
     super.initState();
