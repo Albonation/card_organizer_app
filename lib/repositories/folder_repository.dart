@@ -7,15 +7,15 @@ class FolderRepository {
   final DatabaseHelper _dbHelper = DatabaseHelper.instance;
 
   // CREATE - Insert a new folder
-  Future insertFolder(Folder folder) async {
+  Future<int> insertFolder(Folder folder) async {
     final db = await _dbHelper.database;
-    return await db.insert('folders', folder.toMap());
+    return db.insert('folders', folder.toMap());
   }
 
   // READ - Get all folders
-  Future getAllFolders() async {
+  Future<List<Folder>> getAllFolders() async {
     final db = await _dbHelper.database;
-    final List maps = await db.query('folders');
+    final List<Map<String, dynamic>> maps = await db.query('folders');
     
     return List.generate(maps.length, (i) {
       return Folder.fromMap(maps[i]);
@@ -23,9 +23,9 @@ class FolderRepository {
   }
 
   // READ - Get a single folder by ID
-  Future> getFolderById(int id) async {
+  Future<Folder?> getFolderById(int id) async {
     final db = await _dbHelper.database;
-    final List maps = await db.query(
+    final List<Map<String, dynamic>> maps = await db.query(
       'folders',
       where: 'id = ?',
       whereArgs: [id],
@@ -36,9 +36,9 @@ class FolderRepository {
   }
 
   // UPDATE - Update an existing folder
-  Future updateFolder(Folder folder) async {
+  Future<int> updateFolder(Folder folder) async {
     final db = await _dbHelper.database;
-    return await db.update(
+    return db.update(
       'folders',
       folder.toMap(),
       where: 'id = ?',
@@ -47,10 +47,10 @@ class FolderRepository {
   }
 
   // DELETE - Delete a folder and all associated cards
-  Future deleteFolder(int id) async {
+  Future<int> deleteFolder(int id) async {
     final db = await _dbHelper.database;
     // Due to ON DELETE CASCADE, this will also delete all cards
-    return await db.delete(
+    return db.delete(
       'folders',
       where: 'id = ?',
       whereArgs: [id],
@@ -58,7 +58,7 @@ class FolderRepository {
   }
 
   // Get folder count
-  Future getFolderCount() async {
+  Future<int> getFolderCount() async {
     final db = await _dbHelper.database;
     final result = await db.rawQuery('SELECT COUNT(*) as count FROM folders');
     return Sqflite.firstIntValue(result) ?? 0;
