@@ -19,7 +19,7 @@ class DatabaseHelper {
 
     return await openDatabase(
       path,
-      version: 3, //increment this version if you make changes to the database schema
+      version: 4, //increment this version if you make changes to the database schema
       onConfigure: _onConfigure,
       onCreate: _createDB,
     );

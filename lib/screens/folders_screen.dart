@@ -104,10 +104,14 @@ class _FoldersScreenState extends State {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(
-                    _getSuitIcon(folder.folderName),
-                    size: 64,
-                    color: _getSuitColor(folder.folderName),
+                  Text(
+                    _getSuitSymbol(folder.folderName),
+                    style: TextStyle(
+                      fontSize: 48,
+                      fontWeight: FontWeight.w900,
+                      color: _getSuitColor(folder.folderName),
+                      height: 1,
+                    ),
                   ),
                   SizedBox(height: 8),
                   Text(
@@ -157,6 +161,16 @@ class _FoldersScreenState extends State {
         return Colors.black;
       default:
         return Colors.grey;
+    }
+  }
+
+  String _getSuitSymbol(String suitName) {
+    switch (suitName) {
+      case 'Hearts': return '♥';
+      case 'Diamonds': return '♦';
+      case 'Clubs': return '♣';
+      case 'Spades': return '♠';
+      default: return '?';
     }
   }
 }

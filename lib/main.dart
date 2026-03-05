@@ -20,7 +20,7 @@ Future<void> main() async {
   //await DatabaseHelper.instance.printDatabaseContents();
 
   //models and repositories test
-  _smokeTestRepositories();
+  //_smokeTestRepositories();
 
   runApp(const MyApp());
 }
