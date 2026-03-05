@@ -34,45 +34,72 @@ class _CardsScreenState extends State<CardsScreen> {
     return Scaffold(
       appBar: AppBar(title: Text(widget.folder.folderName)),
       body: _cards.isEmpty
-      ? const Center(child: Text("No cards in this folder"))
-      : GridView.builder(
+          ? const Center(child: Text("No cards in this folder"))
+          : GridView.builder(
         padding: const EdgeInsets.all(16),
-        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 2,
+        gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+          maxCrossAxisExtent: 220,
           crossAxisSpacing: 16,
           mainAxisSpacing: 16,
-          childAspectRatio: 1.2,
+          mainAxisExtent: 260,
         ),
         itemCount: _cards.length,
         itemBuilder: (context, index) {
           final card = _cards[index];
-        return GestureDetector(
-          onTap: () {},
-          child: Card(
-            elevation: 4,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                if (card.imageUrl != null)
-                Image.asset(
-                  card.imageUrl!,
-                  height: 80,
-                  fit: BoxFit.cover,
+
+          return InkWell(
+            borderRadius: BorderRadius.circular(12),
+            onTap: () {
+              //later: open add/edit card screen
+            },
+            child: Card(
+              elevation: 4,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+              clipBehavior: Clip.antiAlias,
+              child: Padding(
+                padding: const EdgeInsets.all(10),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+
+                    Expanded(
+                      child: AspectRatio(
+                        aspectRatio: 2.5 / 3.5,
+                        child: card.imageUrl == null
+                            ? Container(
+                          alignment: Alignment.center,
+                          child: const Icon(Icons.image_not_supported),
+                        )
+                            : Image.asset(
+                          card.imageUrl!,
+                          fit: BoxFit.contain,
+                          //fit: BoxFit.cover, nope
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+
+                    //text area
+                    FittedBox(
+                      fit: BoxFit.scaleDown,
+                      child: Text(
+                        card.cardName,
+                        style: const TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                    const SizedBox(height: 2),
+                    FittedBox(
+                      fit: BoxFit.scaleDown,
+                      child: Text(card.suit),
+                    ),
+                  ],
                 ),
-                const SizedBox(height: 8),
-                Text(
-                  card.cardName,
-                  style: const TextStyle(fontWeight: FontWeight.bold),
-                ),
-                Text(card.suit),
-              ],
+              ),
             ),
-          ),
-        );
-      },
+          );
+        },
       ),
     );
   }
