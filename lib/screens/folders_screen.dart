@@ -23,7 +23,7 @@ class _FoldersScreenState extends State {
 
   Future<void> _loadFolders() async {
     final folders = await _folderRepository.getAllFolders();
-    final Map counts = {};
+    final Map<int, int> counts = {};
     
     for (var folder in folders) {
       counts[folder.id!] = await _cardRepository.getCardCountByFolder(folder.id!);
@@ -70,69 +70,73 @@ class _FoldersScreenState extends State {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Card Organizer'),
+        title: const Text('Card Organizer'),
         elevation: 0,
       ),
       body: GridView.builder(
-        padding: EdgeInsets.all(16),
-        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 2,
+        padding: const EdgeInsets.all(16),
+        gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+          maxCrossAxisExtent: 320,
           crossAxisSpacing: 16,
           mainAxisSpacing: 16,
-          childAspectRatio: 1.2,
+          mainAxisExtent: 190,
         ),
         itemCount: _folders.length,
         itemBuilder: (context, index) {
           final folder = _folders[index];
           final cardCount = _cardCounts[folder.id!] ?? 0;
-          
+
           return Card(
             elevation: 4,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(12),
             ),
             child: InkWell(
+              borderRadius: BorderRadius.circular(12),
               onTap: () async {
                 await Navigator.push(
                   context,
-                  MaterialPageRoute(
-                    builder: (context) => CardsScreen(folder: folder),
-                  ),
+                  MaterialPageRoute(builder: (context) => CardsScreen(folder: folder)),
                 );
-                _loadFolders(); // Refresh after returning
+                _loadFolders();
               },
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    _getSuitSymbol(folder.folderName),
-                    style: TextStyle(
-                      fontSize: 48,
-                      fontWeight: FontWeight.w900,
-                      color: _getSuitColor(folder.folderName),
-                      height: 1,
+              child: Padding(
+                padding: const EdgeInsets.all(12),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      _getSuitSymbol(folder.folderName),
+                      style: TextStyle(
+                        fontSize: 56,
+                        fontWeight: FontWeight.w900,
+                        color: _getSuitColor(folder.folderName),
+                        height: 1,
+                      ),
                     ),
-                  ),
-                  SizedBox(height: 8),
-                  Text(
-                    folder.folderName,
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
+                    const SizedBox(height: 6),
+                    FittedBox(
+                      fit: BoxFit.scaleDown,
+                      child: Text(
+                        folder.folderName,
+                        style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                      ),
                     ),
-                  ),
-                  Text(
-                    '$cardCount cards',
-                    style: TextStyle(
-                      color: Colors.grey[600],
+                    const SizedBox(height: 4),
+                    Text(
+                      '$cardCount cards',
+                      style: TextStyle(color: Colors.grey[600]),
                     ),
-                  ),
-                  SizedBox(height: 8),
-                  IconButton(
-                    icon: Icon(Icons.delete, color: Colors.red),
-                    onPressed: () => _deleteFolder(folder),
-                  ),
-                ],
+                    const SizedBox(height: 6),
+                    IconButton(
+                      icon: const Icon(Icons.delete, color: Colors.red),
+                      onPressed: () => _deleteFolder(folder),
+                      padding: EdgeInsets.zero,
+                      constraints: const BoxConstraints(),
+                      tooltip: 'Delete folder',
+                    ),
+                  ],
+                ),
               ),
             ),
           );
