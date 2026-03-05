@@ -21,7 +21,7 @@ class _FoldersScreenState extends State {
     _loadFolders();
   }
 
-  Future _loadFolders() async {
+  Future<void> _loadFolders() async {
     final folders = await _folderRepository.getAllFolders();
     final Map counts = {};
     
